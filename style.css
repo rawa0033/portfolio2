@@ -1,0 +1,551 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    color: #fff;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.background {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.portfolio-text {
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.portfolio-text > span {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.portfolio-text p {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 5rem !important;
+    margin: -10px 0 0 0 !important;
+    font-style: italic !important;
+    color: #000 !important;
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+.portfolio-text p .letter {
+    display: inline-block !important;
+    transition: transform 0.2s ease-out;
+    transform-origin: center bottom;
+}
+
+/* Ensure letter spans inherit paragraph font size, unaffected by generic span rules */
+.portfolio-text p .letter {
+    font-size: 1em !important;
+}
+
+.portfolio-text p:hover .letter {
+    transform: scale(1.2);
+}
+
+.sticky-note {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    width: 250px;
+    padding: 15px;
+    background-color: #ffc;
+    box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    color: #000;
+}
+
+.sticky-note p {
+    margin: 0 0 10px 0;
+}
+
+.sticky-note ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sticky-note li {
+    margin-bottom: 5px;
+}
+
+.folder {
+    position: absolute;
+    width: 100px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.folder img {
+    width: 80px;
+    height: 80px;
+}
+
+.folder span {
+    display: block;
+    margin-top: 5px;
+    color: #000;
+}
+
+.dock {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: flex-end;
+    padding: 10px;
+    background-color: rgba(179, 179, 179, 0.2);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.dock-item {
+    margin: 0 8px;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+}
+
+.dock-item img {
+    width: 100%;
+    height: 100%;
+    transition: all 0.2s ease-in-out;
+}
+
+.dock-item span {
+    display: none;
+    position: absolute;
+    top: -35px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.dock-item:hover span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dock-item.calendar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #fff;
+    border-radius: 12px;
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    font-size: 10px;
+}
+
+.calendar .day-of-week {
+    background-color: #ec6a5e;
+    color: white;
+    width: 100%;
+    text-align: center;
+    height: 25px;
+    line-height: 25px;
+    font-size: 1.3em;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    margin: 0;
+    padding: 0;
+}
+
+.calendar .day {
+    width: 100%;
+    height: calc(100% - 25px); 
+    position: absolute; 
+    top: 25px; 
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-size: 3em;
+    font-weight: 300;
+    margin: 0;
+    padding: 0; 
+}
+
+.calendar span {
+    display: block;
+    position: static;
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
+    white-space: normal;
+    font-size: initial;
+    margin: 0;
+}
+
+.window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(1100px, 92vw);
+    height: min(750px, 85vh);
+    background-color: #f6f6f6;
+    border-radius: 10px;
+    box-shadow: 0 22px 70px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.1);
+    z-index: 10;
+    overflow: hidden;
+}
+
+.window-header {
+    background: linear-gradient(to bottom, #e8e8e8, #d3d3d3);
+    height: 28px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    cursor: move;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom: 1px solid #b3b3b3;
+    position: relative;
+}
+
+.close-button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ff5f57;
+    border: 1px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    font-size: 0;
+    transition: opacity 0.2s;
+}
+
+.close-button:hover {
+    opacity: 0.8;
+}
+
+.window-body {
+    padding: 20px;
+    height: calc(100% - 28px);
+    background-color: #fff;
+    color: #333;
+    overflow-y: auto;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* When a window body contains embedded media (PDF/video), remove padding and let it fill */
+.window-body.is-media {
+    padding: 0;
+    overflow: hidden;
+}
+
+.window-body.is-media iframe,
+.window-body.is-media video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.window-controls {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.window-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+    opacity: 1;
+}
+
+.window-btn.close { background-color: #ff5f57; }
+.window-btn.minimize { background-color: #ffbd2e; }
+.window-btn.fullscreen { background-color: #28c840; }
+
+/* Removed redundant hover opacity */
+
+.window-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.folder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 20px;
+    padding: 10px;
+}
+
+.folder-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.folder-item:hover {
+    background-color: rgba(0, 122, 255, 0.1);
+}
+
+.folder-item img {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 8px;
+}
+
+.folder-item span {
+    font-size: 12px;
+    color: #333;
+    word-wrap: break-word;
+    max-width: 80px;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #1a1a1a; /* Dark background for desktop */
+    color: #e0e0e0; /* Light text for dark mode */
+}
+
+body.dark-mode .background {
+    background-color: #1a1a1a;
+    background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+}
+
+body.dark-mode .portfolio-text > span,
+body.dark-mode .portfolio-text p {
+    color: #e0e0e0 !important; /* Light text for portfolio text in dark mode */
+}
+
+body.dark-mode .sticky-note {
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+    box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
+}
+
+body.dark-mode .folder span {
+    color: #e0e0e0;
+}
+
+body.dark-mode .dock {
+    background-color: rgba(50, 50, 50, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .dock-item span {
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #1a1a1a;
+}
+
+body.dark-mode .dock-item.calendar {
+    background-color: #2a2a2a;
+    box-shadow: 0 1px 2px rgba(255,255,255,0.1);
+}
+
+body.dark-mode .calendar .day-of-week {
+    background-color: #4a4a4a;
+    color: #e0e0e0;
+}
+
+body.dark-mode .calendar .day {
+    color: #e0e0e0;
+}
+
+body.dark-mode .window {
+    background: rgba(30, 30, 30, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .window-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .window-title {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+body.dark-mode .window-toolbar {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(30, 30, 30, 0.5);
+}
+
+body.dark-mode .toolbar-btn:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .toolbar-btn svg {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+body.dark-mode .toolbar-separator {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .toolbar-search {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(30, 30, 30, 0.6);
+    color: #e0e0e0;
+}
+
+body.dark-mode .toolbar-search::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+body.dark-mode .view-options {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .view-btn {
+    background: rgba(30, 30, 30, 0.6);
+}
+
+body.dark-mode .view-btn:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .view-btn.active {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .view-btn.icon-view::before,
+body.dark-mode .view-btn.list-view::before {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+body.dark-mode .window-sidebar {
+    background: rgba(30, 30, 30, 0.4);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .sidebar-section {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+body.dark-mode .sidebar-item {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+body.dark-mode .sidebar-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .sidebar-item.active {
+    background-color: #007aff; /* Keep blue for active, consistent with Mac */
+    color: white;
+}
+
+body.dark-mode .window-body {
+    background: rgba(30, 30, 30, 0.9);
+    color: #e0e0e0;
+}
+
+/* Settings Panel Specific Styles */
+.settings-panel {
+    padding: 20px;
+}
+
+.settings-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.dark-mode .settings-section h3 {
+    color: #e0e0e0;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 20px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 20px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #007aff;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #007aff;
+}
+
+input:checked + .slider:before {
+    transform: translateX(14px);
+}

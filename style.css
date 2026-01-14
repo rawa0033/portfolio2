@@ -9,15 +9,39 @@ body, html {
     font-family: 'Open Sans', sans-serif;
 }
 
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.5);
+    --glass-bg-strong: rgba(255, 255, 255, 0.62);
+    --glass-border: rgba(255, 255, 255, 0.45);
+    --glass-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+    --glass-blur: 24px;
+    --glass-saturation: 160%;
+}
+
 .background {
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f0f0f0;
-    background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
-    background-size: 20px 20px;
+    position: relative;
+    background-color: #eceef3;
+    background-image:
+        linear-gradient(rgba(10, 12, 16, 0.28), rgba(10, 12, 16, 0.28)),
+        url("assets portfolio/additional assets/background.jpg");
+    background-size: cover, cover;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+    overflow: hidden;
+}
+
+.background::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.35), transparent 60%);
+    opacity: 0.2;
+    pointer-events: none;
 }
 
 .portfolio-text {
@@ -60,27 +84,117 @@ body, html {
     position: absolute;
     top: 50px;
     left: 50px;
-    width: 250px;
-    padding: 15px;
-    background-color: #ffc;
-    box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    color: #000;
+    width: 320px;
+    padding: 16px 18px 18px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 18px;
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #111;
 }
 
-.sticky-note p {
-    margin: 0 0 10px 0;
+.task-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
 }
 
-.sticky-note ul {
+.task-card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.task-progress-text {
+    font-size: 0.85rem;
+    color: rgba(0, 0, 0, 0.6);
+    white-space: nowrap;
+}
+
+.task-progress {
+    margin: 10px 0 14px;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.task-progress-fill {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #4aa3ff, #2f6dff);
+    border-radius: 999px;
+}
+
+.task-list {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.sticky-note li {
-    margin-bottom: 5px;
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
 }
+
+.task-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    position: relative;
+    flex: 0 0 18px;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.task-item.is-done .task-check {
+    border-color: #4aa3ff;
+    background: #4aa3ff;
+}
+
+.task-item.is-done .task-check::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(45deg);
+}
+
+.task-text {
+    flex: 1 1 auto;
+    font-size: 0.95rem;
+    color: #111;
+}
+
+.task-item.is-done .task-text {
+    color: rgba(0, 0, 0, 0.5);
+    text-decoration: line-through;
+}
+
+.task-tag {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.tag-career { background: #2f6dff; }
+.tag-code { background: #8b5cf6; }
+.tag-life { background: #22c55e; }
 
 .folder {
     position: absolute;
@@ -108,10 +222,12 @@ body, html {
     display: flex;
     align-items: flex-end;
     padding: 10px;
-    background-color: rgba(179, 179, 179, 0.2);
+    background-color: rgba(255, 255, 255, 0.35);
     border-radius: 20px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
     z-index: 1000;
     transition: all 0.3s ease;
 }
@@ -133,6 +249,7 @@ body, html {
     height: 100%;
     transition: all 0.2s ease-in-out;
 }
+
 
 .dock-item span {
     display: none;
@@ -219,15 +336,18 @@ body, html {
     transform: translate(-50%, -50%);
     width: min(1100px, 92vw);
     height: min(750px, 85vh);
-    background-color: #f6f6f6;
+    background-color: var(--glass-bg);
     border-radius: 10px;
-    box-shadow: 0 22px 70px 4px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.1);
+    box-shadow: var(--glass-shadow);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
     z-index: 10;
     overflow: hidden;
 }
 
 .window-header {
-    background: linear-gradient(to bottom, #e8e8e8, #d3d3d3);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(230, 230, 235, 0.65));
     height: 28px;
     padding: 0 10px;
     display: flex;
@@ -235,7 +355,7 @@ body, html {
     cursor: move;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    border-bottom: 1px solid #b3b3b3;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.35);
     position: relative;
 }
 
@@ -257,10 +377,14 @@ body, html {
 .window-body {
     padding: 20px;
     height: calc(100% - 28px);
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.78);
     color: #333;
     overflow-y: auto;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.window-body.is-folder {
+    background-color: rgba(255, 255, 255, 0.58);
 }
 
 /* When a window body contains embedded media (PDF/video), remove padding and let it fill */
@@ -337,6 +461,68 @@ body, html {
     width: 60px;
     height: 60px;
     margin-bottom: 8px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.photo-view {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin: 0 auto;
+}
+
+.gallery-view {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 100%;
+}
+
+.gallery-image {
+    max-width: min(900px, 80vw);
+    max-height: 70vh;
+    width: auto;
+    height: auto;
+    border-radius: 14px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+}
+
+.gallery-caption {
+    text-align: center;
+    margin-top: 10px;
+    color: inherit;
+    opacity: 0.8;
+    font-size: 14px;
+}
+
+.gallery-nav {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.6);
+    color: #111;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 24px;
+    line-height: 34px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.gallery-nav:hover {
+    transform: scale(1.06);
+    background: rgba(255, 255, 255, 0.8);
+}
+
+body.dark-mode .gallery-nav {
+    background: rgba(26, 28, 34, 0.75);
+    color: #f2f2f2;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .folder-item span {
@@ -346,6 +532,10 @@ body, html {
     max-width: 80px;
 }
 
+body.dark-mode .folder-item span {
+    color: #f2f2f2;
+}
+
 /* Dark Mode Styles */
 body.dark-mode {
     background-color: #1a1a1a; /* Dark background for desktop */
@@ -353,8 +543,13 @@ body.dark-mode {
 }
 
 body.dark-mode .background {
-    background-color: #1a1a1a;
-    background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-color: #121418;
+    background-image:
+        linear-gradient(rgba(8, 10, 14, 0.7), rgba(8, 10, 14, 0.7)),
+        url("assets portfolio/additional assets/background.jpg");
+    background-size: cover, cover;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
 }
 
 body.dark-mode .portfolio-text > span,
@@ -363,9 +558,36 @@ body.dark-mode .portfolio-text p {
 }
 
 body.dark-mode .sticky-note {
-    background-color: #3a3a3a;
+    background: rgba(35, 38, 46, 0.7);
     color: #e0e0e0;
-    box-shadow: 5px 5px 10px rgba(0,0,0,0.5);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+body.dark-mode .task-progress-text {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+body.dark-mode .task-progress {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+body.dark-mode .task-item {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+body.dark-mode .task-text {
+    color: #f1f1f1;
+}
+
+body.dark-mode .task-item.is-done .task-text {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+body.dark-mode .task-check {
+    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 body.dark-mode .folder span {
@@ -373,8 +595,11 @@ body.dark-mode .folder span {
 }
 
 body.dark-mode .dock {
-    background-color: rgba(50, 50, 50, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(30, 30, 35, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
 }
 
 body.dark-mode .dock-item span {
@@ -383,27 +608,30 @@ body.dark-mode .dock-item span {
 }
 
 body.dark-mode .dock-item.calendar {
-    background-color: #2a2a2a;
-    box-shadow: 0 1px 2px rgba(255,255,255,0.1);
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 body.dark-mode .calendar .day-of-week {
-    background-color: #4a4a4a;
-    color: #e0e0e0;
+    background-color: #ec6a5e;
+    color: white;
 }
 
 body.dark-mode .calendar .day {
-    color: #e0e0e0;
+    color: #000;
 }
 
 body.dark-mode .window {
-    background: rgba(30, 30, 30, 0.72);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 2px 10px rgba(0, 0, 0, 0.2);
+    background: rgba(26, 28, 34, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 2px 10px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
 }
 
 body.dark-mode .window-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background: linear-gradient(to bottom, rgba(40, 42, 48, 0.8), rgba(26, 28, 34, 0.6));
 }
 
 body.dark-mode .window-title {
@@ -481,8 +709,12 @@ body.dark-mode .sidebar-item.active {
 }
 
 body.dark-mode .window-body {
-    background: rgba(30, 30, 30, 0.9);
+    background: rgba(26, 28, 34, 0.82);
     color: #e0e0e0;
+}
+
+body.dark-mode .window-body.is-folder {
+    background: rgba(26, 28, 34, 0.55);
 }
 
 /* Settings Panel Specific Styles */
@@ -549,3 +781,4 @@ input:focus + .slider {
 input:checked + .slider:before {
     transform: translateX(14px);
 }
+

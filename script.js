@@ -8,6 +8,80 @@ document.addEventListener('DOMContentLoaded', () => {
     const stickyNote = document.querySelector('.sticky-note');
     const portfolioTextP = document.querySelector('.portfolio-text p');
 
+    const galleryGroups = {
+        photography: [
+            { name: 'IMG 1427', src: 'assets portfolio/Photography/IMG_1427.JPG' },
+            { name: 'Portrait', src: 'assets portfolio/Photography/portrait.jpg' },
+            { name: 'Portrait 2', src: 'assets portfolio/Photography/portrait 2.jpg' },
+            { name: 'Rawat R 005', src: 'assets portfolio/Photography/RAWAT R 005.jpg' },
+            { name: 'Rawat R 019', src: 'assets portfolio/Photography/RAWAT R 019.jpg' },
+            { name: 'Rawat R 020', src: 'assets portfolio/Photography/RAWAT R 020.jpg' },
+            { name: 'Light Painting', src: 'assets portfolio/Photography/RAWAT R 02 Light painting.jpg' }
+        ]
+    };
+
+    function setWindowBodyMode(targetBody, mode) {
+        targetBody.classList.toggle('is-folder', mode === 'folder');
+        if (mode === 'folder') {
+            targetBody.classList.remove('is-media');
+        }
+    }
+
+    function renderGallery(targetBody, groupId, initialSrc, titleEl) {
+        const items = galleryGroups[groupId] || [];
+        if (!items.length) return;
+
+        let currentIndex = Math.max(0, items.findIndex(item => item.src === initialSrc));
+
+        targetBody.innerHTML = `
+            <div class="gallery-view">
+                <button class="gallery-nav prev" aria-label="Previous photo">‹</button>
+                <img class="gallery-image" src="" alt="" />
+                <button class="gallery-nav next" aria-label="Next photo">›</button>
+            </div>
+            <div class="gallery-caption"></div>
+        `;
+
+        const imageEl = targetBody.querySelector('.gallery-image');
+        const captionEl = targetBody.querySelector('.gallery-caption');
+        const prevBtn = targetBody.querySelector('.gallery-nav.prev');
+        const nextBtn = targetBody.querySelector('.gallery-nav.next');
+
+        const updateView = () => {
+            const item = items[currentIndex];
+            imageEl.src = item.src;
+            imageEl.alt = item.name;
+            captionEl.textContent = item.name;
+            if (titleEl) titleEl.textContent = item.name;
+        };
+
+        const goPrev = () => {
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
+            updateView();
+        };
+
+        const goNext = () => {
+            currentIndex = (currentIndex + 1) % items.length;
+            updateView();
+        };
+
+        prevBtn.addEventListener('click', goPrev);
+        nextBtn.addEventListener('click', goNext);
+
+        const onKeyDown = (e) => {
+            if (e.key === 'ArrowLeft') goPrev();
+            if (e.key === 'ArrowRight') goNext();
+        };
+
+        document.addEventListener('keydown', onKeyDown);
+        const cleanup = () => document.removeEventListener('keydown', onKeyDown);
+
+        updateView();
+        setWindowBodyMode(targetBody, 'default');
+        targetBody.classList.add('is-gallery');
+        return cleanup;
+    }
+
     let cascadingWindowOffset = 0; // New global counter for cascading offset
     let currentZIndex = 1000; // Global z-index counter
 
@@ -92,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (app.name === 'Settings') {
                 windowTitle.textContent = app.name;
                 windowBody.innerHTML = '<div class="settings-panel"><div class="settings-section"><h3>Appearance</h3><label class="toggle-switch"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label> Dark Mode</div></div>';
+                setWindowBodyMode(windowBody, 'default');
                 openMainWindow(app.name);
 
                 const darkModeToggle = document.getElementById('darkModeToggle');
@@ -106,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Show the same UI/UX (Active Life Center) items inside the Figma app
                 windowTitle.textContent = app.name;
                 windowBody.innerHTML = '<div class="folder-grid"></div>';
+                setWindowBodyMode(windowBody, 'folder');
 
                 const grid = windowBody.querySelector('.folder-grid');
                 const uiuxCategory = projectCategories.find(c => c.name === 'UI/UX');
@@ -127,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Show Motion Graphics projects inside After Effects (shortcuts)
                 windowTitle.textContent = app.name;
                 windowBody.innerHTML = '<div class="folder-grid"></div>';
+                setWindowBodyMode(windowBody, 'folder');
 
                 const grid = windowBody.querySelector('.folder-grid');
                 motionGraphicsProjects.forEach(item => {
@@ -144,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 windowTitle.textContent = app.name;
                 windowBody.innerHTML = app.content;
+                setWindowBodyMode(windowBody, 'default');
                 openMainWindow(app.name); // Open main window for other apps
             }
         });
@@ -182,16 +260,60 @@ document.addEventListener('DOMContentLoaded', () => {
             ] 
         },
         { 
-            name: 'CMS', 
-            icon: 'assets portfolio/additional assets/folder.png', 
-            type: 'category', 
-            subfolders: [] 
-        },
-        { 
             name: 'Photography', 
             icon: 'assets portfolio/additional assets/folder.png', 
             type: 'category', 
-            subfolders: [] 
+            subfolders: [
+                {
+                    name: 'IMG 1427',
+                    icon: 'assets portfolio/Photography/IMG_1427.JPG',
+                    type: 'file',
+                    group: 'photography',
+                    src: 'assets portfolio/Photography/IMG_1427.JPG'
+                },
+                {
+                    name: 'Portrait',
+                    icon: 'assets portfolio/Photography/portrait.jpg',
+                    type: 'file',
+                    group: 'photography',
+                    src: 'assets portfolio/Photography/portrait.jpg'
+                },
+                {
+                    name: 'Portrait 2',
+                    icon: 'assets portfolio/Photography/portrait 2.jpg',
+                    type: 'file',
+                    group: 'photography',
+                    src: 'assets portfolio/Photography/portrait 2.jpg'
+                },
+                {
+                    name: 'Rawat R 005',
+                    icon: 'assets portfolio/Photography/RAWAT R 005.jpg',
+                    type: 'file',
+                    group: 'photography',
+                    src: 'assets portfolio/Photography/RAWAT R 005.jpg'
+                },
+                {
+                    name: 'Rawat R 019',
+                    icon: 'assets portfolio/Photography/RAWAT R 019.jpg',
+                    type: 'file',
+                    group: 'photography',
+                    src: 'assets portfolio/Photography/RAWAT R 019.jpg'
+                },
+                {
+                    name: 'Rawat R 020',
+                    icon: 'assets portfolio/Photography/RAWAT R 020.jpg',
+                    type: 'file',
+                    group: 'photography',
+                    src: 'assets portfolio/Photography/RAWAT R 020.jpg'
+                },
+                {
+                    name: 'Light Painting',
+                    icon: 'assets portfolio/Photography/RAWAT R 02 Light painting.jpg',
+                    type: 'file',
+                    group: 'photography',
+                    src: 'assets portfolio/Photography/RAWAT R 02 Light painting.jpg'
+                }
+            ] 
         },
         { 
             name: 'Web Development', 
@@ -257,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
        
     const folders = [
-        { name: 'Portfolio', icon: 'assets portfolio/additional assets/folder.png', type: 'file', content: '<iframe src="assets portfolio/additional assets/portfolio.pdf" style="width:100%; height:100%; border:none;"></iframe>', x: 200, y: 300 },
+        { name: 'Portfolio', icon: 'assets portfolio/additional assets/folder.png', type: 'file', content: '<iframe src="assets portfolio/additional assets/portfolio.pdf" style="width:100%; height:100%; border:none;"></iframe>', x: 300, y: 560 },
         { name: 'Projects', icon: 'assets portfolio/additional assets/folder.png', type: 'category', subfolders: projectCategories, x: 800, y: 200 },
         { name: 'Resume.pdf', icon: 'assets portfolio/additional assets/folder.png', type: 'file', content: '<iframe src="assets portfolio/additional assets/Resume_Rishabh_Rawat.pdf" style="width:100%; height:100%; border:none;"></iframe>', x: 150, y: 500 }
     ];
@@ -294,6 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (folder.name === 'Projects') {
                 windowTitle.textContent = folder.name;
                 windowBody.innerHTML = '<div class="folder-grid"></div>';
+                setWindowBodyMode(windowBody, 'folder');
                 const folderGrid = windowBody.querySelector('.folder-grid');
                 
                 projectCategories.forEach(subfolder => {
@@ -423,8 +546,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Render category vs file content
         const newWindowBody = newWindow.querySelector('.window-body');
-        if (folderItem.type === 'category' && Array.isArray(folderItem.subfolders)) {
-            newWindowBody.classList.remove('is-media');
+        if (folderItem.type === 'category' && folderItem.name === 'Photography') {
+            const photoItems = galleryGroups.photography || [];
+            if (photoItems.length) {
+                const randomItem = photoItems[Math.floor(Math.random() * photoItems.length)];
+                const titleEl = newWindow.querySelector('.window-title');
+                const cleanup = renderGallery(newWindowBody, 'photography', randomItem.src, titleEl);
+                if (cleanup) newWindow.__cleanup = cleanup;
+            }
+        } else if (folderItem.type === 'category' && folderItem.name === 'Graphic Design') {
+            newWindowBody.innerHTML = '<iframe src="assets portfolio/additional assets/portfolio.pdf" style="width:100%; height:100%; border:none;"></iframe>';
+            setWindowBodyMode(newWindowBody, 'default');
+            newWindowBody.classList.add('is-media');
+        } else if (folderItem.type === 'category' && Array.isArray(folderItem.subfolders)) {
+            setWindowBodyMode(newWindowBody, 'folder');
             const folderGrid = document.createElement('div');
             folderGrid.classList.add('folder-grid');
 
@@ -441,9 +576,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             newWindowBody.appendChild(folderGrid);
         } else {
-            newWindowBody.innerHTML = folderItem.content || '';
-            const hasMedia = !!newWindowBody.querySelector('iframe, video');
-            newWindowBody.classList.toggle('is-media', hasMedia);
+            if (folderItem.group && folderItem.src) {
+                const titleEl = newWindow.querySelector('.window-title');
+                const cleanup = renderGallery(newWindowBody, folderItem.group, folderItem.src, titleEl);
+                if (cleanup) newWindow.__cleanup = cleanup;
+            } else {
+                newWindowBody.innerHTML = folderItem.content || '';
+                const hasMedia = !!newWindowBody.querySelector('iframe, video');
+                setWindowBodyMode(newWindowBody, 'default');
+                newWindowBody.classList.toggle('is-media', hasMedia);
+            }
         }
         
         // Make the new window draggable and add traffic light functionality
@@ -482,6 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Traffic light functionality for new windows
         if (newBtnClose) {
             newBtnClose.addEventListener('click', () => {
+                if (newWindow.__cleanup) newWindow.__cleanup();
                 newWindow.style.opacity = '0';
                 newWindow.style.transform = 'translate(-50%, -50%) scale(0.98)';
                 setTimeout(() => {

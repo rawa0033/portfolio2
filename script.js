@@ -27,6 +27,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /** Narrow / touch: single tap opens; desktop keeps double-click */
+    function preferSingleTapOpen() {
+        return window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+    }
+
+    function bindOpenGesture(element, handler) {
+        let lastFire = 0;
+        const run = (e) => {
+            const now = Date.now();
+            if (now - lastFire < 420) return;
+            lastFire = now;
+            handler(e);
+        };
+        element.addEventListener('dblclick', (e) => {
+            if (preferSingleTapOpen()) return;
+            e.preventDefault();
+            run(e);
+        });
+        element.addEventListener('click', (e) => {
+            if (!preferSingleTapOpen()) return;
+            if (e.detail !== 1) return;
+            run(e);
+        });
+    }
+
     function renderGallery(targetBody, groupId, initialSrc, titleEl) {
         const items = galleryGroups[groupId] || [];
         if (!items.length) return;
@@ -151,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dock.appendChild(dockItem);
         console.log('Dock item created:', app.name, dockItem);
 
-        dockItem.addEventListener('dblclick', () => {
+        bindOpenGesture(dockItem, () => {
             // Check if window already exists and is hidden
             if (windowRegistry[app.name] && windowRegistry[app.name].style.display === 'none') {
                 const existingWindow = windowRegistry[app.name];
@@ -194,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <img src="${item.icon}" alt="folder"/>
                         <span>${item.name}</span>
                     `;
-                    el.addEventListener('dblclick', () => createNewWindow(item));
+                    bindOpenGesture(el, () => createNewWindow(item));
                     grid.appendChild(el);
                 });
 
@@ -213,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <img src="${item.icon}" alt="folder"/>
                         <span>${item.name}</span>
                     `;
-                    el.addEventListener('dblclick', () => createNewWindow(item));
+                    bindOpenGesture(el, () => createNewWindow(item));
                     grid.appendChild(el);
                 });
 
@@ -229,12 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const projectCategories = [
         { 
-            name: 'Motion Graphics', 
-            icon: 'assets portfolio/additional assets/folder.png', 
-            type: 'category', 
-            subfolders: motionGraphicsProjects
-        },
-        { 
             name: 'Graphic Design', 
             icon: 'assets portfolio/additional assets/folder.png', 
             type: 'category', 
@@ -249,13 +268,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     name: 'Razer Branding Project',
                     icon: 'assets portfolio/additional assets/folder.png',
                     type: 'file',
-                    content: '<iframe src="assets portfolio/Branding/Razer Branding Project/razer project.pdf" style="width:100%; height:100%; border:none;"></iframe>'
+                    externalLink: 'assets portfolio/Branding/Razer Branding Project/razer project.pdf'
                 },
                 {
                     name: 'Sweet Sentiments Branding Project',
                     icon: 'assets portfolio/additional assets/folder.png',
                     type: 'file',
-                    content: '<iframe src="assets portfolio/Branding/Sweet Sentiment/branding sweet sentiments .pdf" style="width:100%; height:100%; border:none;"></iframe>'
+                    externalLink: 'assets portfolio/Branding/Sweet Sentiment/branding sweet sentiments .pdf'
                 }
             ] 
         },
@@ -321,10 +340,10 @@ document.addEventListener('DOMContentLoaded', () => {
             type: 'category', 
             subfolders: [
                 {
-                    name: 'Active Life Center',
+                    name: 'Web Dev Projects',
                     icon: 'assets portfolio/additional assets/folder.png',
-                    type: 'category',
-                    subfolders: []
+                    type: 'file',
+                    externalLink: 'assets portfolio/Web Development/web dev projects.pdf'
                 }
             ] 
         },
@@ -375,14 +394,57 @@ document.addEventListener('DOMContentLoaded', () => {
                     subfolders: []
                 }
             ] 
+        },
+        { 
+            name: 'Motion Graphics', 
+            icon: 'assets portfolio/additional assets/folder.png', 
+            type: 'category', 
+            subfolders: motionGraphicsProjects
         }
     ];
        
     const folders = [
-        { name: 'Portfolio', icon: 'assets portfolio/additional assets/folder.png', type: 'file', content: '<iframe src="assets portfolio/additional assets/portfolio.pdf" style="width:100%; height:100%; border:none;"></iframe>', x: 300, y: 560 },
+        { name: 'Portfolio', icon: 'assets portfolio/additional assets/folder.png', type: 'file', externalLink: 'assets portfolio/additional assets/portfolio.pdf', x: 300, y: 560 },
         { name: 'Projects', icon: 'assets portfolio/additional assets/folder.png', type: 'category', subfolders: projectCategories, x: 800, y: 200 },
-        { name: 'Resume.pdf', icon: 'assets portfolio/additional assets/folder.png', type: 'file', content: '<iframe src="assets portfolio/additional assets/Resume_Rishabh_Rawat.pdf" style="width:100%; height:100%; border:none;"></iframe>', x: 150, y: 500 }
+        { name: 'Resume.pdf', icon: 'assets portfolio/additional assets/folder.png', type: 'file', externalLink: 'assets portfolio/additional assets/Resume_Rishabh_Rawat.pdf', x: 150, y: 500 }
     ];
+
+    const desktopFolderEntries = [];
+    const mobileFolderOrder = ['Portfolio', 'Resume.pdf', 'Projects'];
+
+    function computeFolderPosition(folder, w, h) {
+        const slotW = 100;
+        if (w < 640) {
+            const idx = mobileFolderOrder.indexOf(folder.name);
+            const i = idx >= 0 ? idx : 0;
+            const cols = mobileFolderOrder.length;
+            const pad = 10;
+            const usable = Math.max(0, w - pad * 2);
+            const colW = usable / cols;
+            const x = pad + i * colW + (colW - slotW) / 2;
+            const y = Math.min(h - 130, Math.max(248, h * 0.52));
+            return { x: Math.round(x), y: Math.round(y) };
+        }
+        if (w < 1100) {
+            const sx = Math.min(1.15, w / 1050);
+            const sy = Math.min(1.1, h / 780);
+            return {
+                x: Math.round(Math.min(folder.x * sx, w - slotW - 8)),
+                y: Math.round(Math.min(folder.y * sy, h - 130))
+            };
+        }
+        return { x: folder.x, y: folder.y };
+    }
+
+    function layoutDesktopFolders() {
+        const w = window.innerWidth;
+        const h = window.innerHeight || document.documentElement.clientHeight;
+        desktopFolderEntries.forEach(({ element, folder }) => {
+            const p = computeFolderPosition(folder, w, h);
+            element.style.left = `${p.x}px`;
+            element.style.top = `${p.y}px`;
+        });
+    }
 
     // Bring a window/folder to the front using a single shared z-index counter
     function bringWindowToFront(targetWindow) {
@@ -394,14 +456,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const folderElement = document.createElement('div');
         folderElement.classList.add('folder');
         folderElement.innerHTML = `<img src="${folder.icon}" alt="folder"/><span>${folder.name}</span>`;
-        folderElement.style.left = `${folder.x}px`;
-        folderElement.style.top = `${folder.y}px`;
+        folderElement.dataset.folderName = folder.name;
         desktop.appendChild(folderElement);
-        console.log('Folder created:', folder.name, folderElement, 'position:', folderElement.style.left, folderElement.style.top);
+        desktopFolderEntries.push({ element: folderElement, folder });
 
         makeDraggable(folderElement);
 
-        folderElement.addEventListener('dblclick', () => {
+        bindOpenGesture(folderElement, () => {
             // Check if window already exists and is hidden
             if (windowRegistry[folder.name] && windowRegistry[folder.name].style.display === 'none') {
                 const existingWindow = windowRegistry[folder.name];
@@ -427,8 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>${subfolder.name}</span>
                     `;
                     
-                    subfolderElement.addEventListener('dblclick', () => {
-                        // Open the actual category/file, not a placeholder message
+                    bindOpenGesture(subfolderElement, () => {
                         createNewWindow(subfolder);
                     });
                     
@@ -436,10 +496,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 openMainWindow(folder.name); // Open main window for Projects content
             } else {
-                createNewWindow(folder.name, folder.content);
+                createNewWindow({
+                    name: folder.name,
+                    type: folder.type || 'file',
+                    content: folder.content,
+                    externalLink: folder.externalLink,
+                    subfolders: folder.subfolders,
+                    icon: folder.icon
+                });
             }
         });
     });
+
+    layoutDesktopFolders();
+    let folderLayoutTimer;
+    const scheduleFolderLayout = () => {
+        clearTimeout(folderLayoutTimer);
+        folderLayoutTimer = setTimeout(layoutDesktopFolders, 100);
+    };
+    window.addEventListener('resize', scheduleFolderLayout);
+    window.addEventListener('orientationchange', scheduleFolderLayout);
 
     // Function to open the main window (reused for general content like About Me, Projects)
     function openMainWindow(title) {
@@ -506,6 +582,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (folderItem.type === 'category' && folderItem.name === 'Graphic Design') {
+            window.open('assets portfolio/additional assets/portfolio.pdf', '_blank', 'noopener,noreferrer');
+            return;
+        }
+
         // Check if window already exists and is hidden
         if (windowRegistry[title] && windowRegistry[title].style.display === 'none') {
             const existingWindow = windowRegistry[title];
@@ -554,10 +635,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cleanup = renderGallery(newWindowBody, 'photography', randomItem.src, titleEl);
                 if (cleanup) newWindow.__cleanup = cleanup;
             }
-        } else if (folderItem.type === 'category' && folderItem.name === 'Graphic Design') {
-            newWindowBody.innerHTML = '<iframe src="assets portfolio/additional assets/portfolio.pdf" style="width:100%; height:100%; border:none;"></iframe>';
-            setWindowBodyMode(newWindowBody, 'default');
-            newWindowBody.classList.add('is-media');
         } else if (folderItem.type === 'category' && Array.isArray(folderItem.subfolders)) {
             setWindowBodyMode(newWindowBody, 'folder');
             const folderGrid = document.createElement('div');
@@ -570,7 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="${sub.icon}" alt="folder"/>
                     <span>${sub.name}</span>
                 `;
-                subEl.addEventListener('dblclick', () => createNewWindow(sub));
+                bindOpenGesture(subEl, () => createNewWindow(sub));
                 folderGrid.appendChild(subEl);
             });
 
@@ -690,37 +767,50 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function makeDraggable(element) {
-        let isDragging = false;
-        let offsetX, offsetY;
-        let currentElement = element;
+        const TH = 10;
+        let activePointerId = null;
+        let startX = 0;
+        let startY = 0;
+        let startLeft = 0;
+        let startTop = 0;
+        let dragging = false;
 
-        const handleMouseDown = (e) => {
-            // Prevent dragging when clicking on child elements like images or text
-            if (e.target !== currentElement && !currentElement.contains(e.target)) return;
-            
-            isDragging = true;
-            offsetX = e.clientX - currentElement.offsetLeft;
-            offsetY = e.clientY - currentElement.offsetTop;
-            bringWindowToFront(currentElement); // Bring to front while dragging
-            e.preventDefault(); // Prevent text selection while dragging
-        };
-
-        const handleMouseMove = (e) => {
-            if (!isDragging) return;
-            
-            currentElement.style.left = `${e.clientX - offsetX}px`;
-            currentElement.style.top = `${e.clientY - offsetY}px`;
-        };
-
-        const handleMouseUp = () => {
-            if (isDragging) {
-                isDragging = false;
+        const onPointerMove = (e) => {
+            if (e.pointerId !== activePointerId) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            if (!dragging && (dx * dx + dy * dy) >= TH * TH) {
+                dragging = true;
+                bringWindowToFront(element);
+            }
+            if (dragging) {
+                element.style.left = `${startLeft + dx}px`;
+                element.style.top = `${startTop + dy}px`;
             }
         };
 
-        element.addEventListener('mousedown', handleMouseDown);
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
+        const endDrag = (e) => {
+            if (e.pointerId !== activePointerId) return;
+            document.removeEventListener('pointermove', onPointerMove);
+            document.removeEventListener('pointerup', endDrag);
+            document.removeEventListener('pointercancel', endDrag);
+            activePointerId = null;
+            dragging = false;
+        };
+
+        element.addEventListener('pointerdown', (e) => {
+            if (e.button !== 0) return;
+            if (e.target !== element && !element.contains(e.target)) return;
+            activePointerId = e.pointerId;
+            startX = e.clientX;
+            startY = e.clientY;
+            startLeft = element.offsetLeft;
+            startTop = element.offsetTop;
+            dragging = false;
+            document.addEventListener('pointermove', onPointerMove);
+            document.addEventListener('pointerup', endDrag);
+            document.addEventListener('pointercancel', endDrag);
+        });
     }
 
     const dockItems = document.querySelectorAll('.dock-item');

@@ -201,6 +201,7 @@ body, html {
     width: 100px;
     text-align: center;
     cursor: pointer;
+    touch-action: manipulation;
 }
 
 .folder img {
@@ -242,6 +243,7 @@ body, html {
     align-items: center;
     width: 60px;
     height: 60px;
+    touch-action: manipulation;
 }
 
 .dock-item img {
@@ -451,6 +453,7 @@ body, html {
     padding: 10px;
     border-radius: 8px;
     transition: background-color 0.2s;
+    touch-action: manipulation;
 }
 
 .folder-item:hover {
@@ -780,5 +783,161 @@ input:focus + .slider {
 
 input:checked + .slider:before {
     transform: translateX(14px);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+    .window {
+        width: min(1100px, 96vw);
+        height: min(750px, calc(100vh - 100px));
+        height: min(750px, calc(100dvh - 100px));
+    }
+
+    .portfolio-text p {
+        font-size: clamp(2.25rem, 10vw, 4rem) !important;
+    }
+
+    .portfolio-text > span {
+        font-size: clamp(1rem, 3vw, 1.5rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .background {
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding-top: max(8px, env(safe-area-inset-top));
+        padding-bottom: max(100px, env(safe-area-inset-bottom));
+        box-sizing: border-box;
+        min-height: 100vh;
+        min-height: 100dvh;
+        min-height: -webkit-fill-available;
+    }
+
+    .portfolio-text {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 4px 12px 0;
+        margin-top: 4px;
+    }
+
+    .portfolio-text p {
+        font-size: clamp(1.75rem, 11vw, 3rem) !important;
+        flex-wrap: wrap;
+        row-gap: 0.1em;
+    }
+
+    .sticky-note {
+        position: relative;
+        left: auto;
+        top: auto;
+        width: auto;
+        max-width: none;
+        margin: 10px 12px 8px;
+        max-height: min(420px, 42vh);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .task-card-header {
+        flex-wrap: wrap;
+    }
+
+    .task-progress-text {
+        white-space: normal;
+        text-align: right;
+        flex: 1 1 100%;
+    }
+
+    .folder {
+        width: 86px;
+    }
+
+    .folder img {
+        width: 64px;
+        height: 64px;
+    }
+
+    .folder span {
+        font-size: 11px;
+        line-height: 1.2;
+    }
+
+    .dock {
+        bottom: max(10px, env(safe-area-inset-bottom, 0px));
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: calc(100vw - 16px);
+        padding: 8px 6px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: visible;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .dock::-webkit-scrollbar {
+        display: none;
+    }
+
+    .dock-item {
+        margin: 0 5px;
+        flex-shrink: 0;
+    }
+
+    .folder-grid {
+        grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+        gap: 12px;
+        padding: 8px;
+    }
+
+    .folder-item img {
+        width: 52px;
+        height: 52px;
+    }
+
+    .folder-item span {
+        max-width: 92px;
+        font-size: 11px;
+    }
+
+    .gallery-view {
+        flex-direction: column;
+        gap: 8px;
+        min-height: auto;
+        padding: 8px 0;
+    }
+
+    .gallery-image {
+        max-width: 100%;
+        max-height: 55vh;
+    }
+
+    .gallery-nav {
+        width: 44px;
+        height: 44px;
+        font-size: 28px;
+    }
+
+    .window-body {
+        padding: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .task-text {
+        font-size: 0.88rem;
+    }
+
+    .task-tag {
+        font-size: 0.65rem;
+        padding: 3px 6px;
+    }
+
+    .window-title {
+        font-size: 12px;
+        padding: 0 4px;
+    }
 }
 
